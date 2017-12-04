@@ -1,3 +1,6 @@
+<?php 
+    require_once 'Controller.php';
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,60 +10,18 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
-    <?php 
-        require_once 'functions.php';
 
-        // Home database
-        $host = 'localhost';
-        $dbname = 'netology';
-        $user = 'root';
-        $pass = 'BJz5c8PI'; 
-        $options = [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, 
-        ];
-
-        $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
-        $pdo = new PDO($dsn, $user, $pass, $options);
-
-        $descr = $_POST['description'] ?? '';
-        $doneId = $_POST['done'] ?? '';
-        $deleteId = $_POST['delete'] ?? '';
-        $editId = $_POST['editId'] ?? '';
-
-        if($descr) {
-            if($editId) {
-                updateTask($pdo, $editId, $descr);
-            } else {
-                insertTask($pdo, $descr);
-            }
-        } 
-        if($doneId) {
-            completeTask($pdo, $doneId);
-        }
-        if($deleteId) {
-            deleteTask($pdo, $deleteId);
-        }
-
-        $column = $_POST['column'] ?? 'id';
-        $query = "SELECT * from tasks
-            ORDER BY $column;
-            ";
-        $prepquery = $pdo->prepare($query);
-        $prepquery->execute();
-        $queryResult = $prepquery->fetchAll();
-    ?>
     <div class="container">
         <h1>Task Manager</h1>
 
         <form action="" method="post" accept-charset="utf-8">
-            
             <?php if($_POST['edit'] ?? '') : ?>
-                <?php $editRow = findTask($pdo, $_POST['edit']); ?>
-                <input type="text" name="description" value="<?php echo $editRow['description']; ?>" placeholder="Название" autofocus>
-                <input type="hidden" name="editId" value="<?php echo $_POST['edit']; ?>">
+                <?php $editRow = $task->findTask($_POST['edit']); ?>
+                <input type="text" name="description" value="<?= $editRow['description'] ?>" placeholder="Название" autofocus>
+                <input type="hidden" name="editId" value="<?= $_POST['edit'] ?>">
                 <input type="submit" name="submit" value="Изменить">
             <?php else : ?>
-                <input type="text" name="description" value="<?php echo $_POST['name'] ?? ''; ?>" placeholder="Название">
+                <input type="text" name="description" value="<?= $_POST['name'] ?? '' ?>" placeholder="Название">
                 <input type="submit" name="submit" value="Добавить">
             <?php endif; ?>
         </form>
@@ -73,9 +34,9 @@
                     <th>
                         Описание задачи
                         <form action="" method="post" accept-charset="utf-8">
-                            <input type="hidden" name="column" value="<?php echo (($_POST['column'] ?? '') == 'description asc' ? 'description desc' : 'description asc') ?>">
+                            <input type="hidden" name="column" value="<?= (($_POST['column'] ?? '') == 'description asc' ? 'description desc' : 'description asc') ?>">
                             <button class="filter" type="submit" value="sort">
-                                <?php echo (($_POST['column'] ?? '') == 'description asc' ? '&#x25BC;' : '&#x25B2;') ?>
+                                <?= (($_POST['column'] ?? '') == 'description asc' ? '&#x25BC;' : '&#x25B2;') ?>
                             <button class="filter" type="submit" value="sort" ?>
                             </button>
                         </form>
@@ -83,9 +44,9 @@
                     <th>
                         Дата добавления
                         <form action="" method="post" accept-charset="utf-8">
-                            <input type="hidden" name="column" value="<?php echo (($_POST['column'] ?? '') == 'date_added asc' ? 'date_added desc' : 'date_added asc') ?>">
+                            <input type="hidden" name="column" value="<?= (($_POST['column'] ?? '') == 'date_added asc' ? 'date_added desc' : 'date_added asc') ?>">
                             <button class="filter" type="submit" value="sort">
-                                <?php echo (($_POST['column'] ?? '') == 'date_added asc' ? '&#x25BC;' : '&#x25B2;') ?>
+                                <?= (($_POST['column'] ?? '') == 'date_added asc' ? '&#x25BC;' : '&#x25B2;') ?>
                             </button>
                         </form>
 
@@ -93,9 +54,9 @@
                     <th>
                         Статус
                         <form action="" method="post" accept-charset="utf-8">
-                            <input type="hidden" name="column" value="<?php echo (($_POST['column'] ?? '') == 'is_done asc' ? 'is_done desc' : 'is_done asc') ?>">
+                            <input type="hidden" name="column" value="<?= (($_POST['column'] ?? '') == 'is_done asc' ? 'is_done desc' : 'is_done asc') ?>">
                             <button class="filter" type="submit" value="sort">
-                                <?php echo (($_POST['column'] ?? '') == 'is_done asc' ? '&#x25BC;' : '&#x25B2;') ?>
+                                <?= (($_POST['column'] ?? '') == 'is_done asc' ? '&#x25BC;' : '&#x25B2;') ?>
                             </button>
                         </form>                        
                     </th>
