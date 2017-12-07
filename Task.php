@@ -1,17 +1,28 @@
 <?php 
 
 class Task {
+    private static $allowedOrders = ['asc', 'desc'];
+    private static $allowedColumns = ['description', 'date_added', 'is_done'];
+
     private $pdo;
+
+    private static function checkedColumnAndOrder($columnOrder) {
+        list($column, $order) = explode(' ', $columnOrder);
+
+        return in_array($column, self::$allowedColumns) && in_array($order, self::$allowedOrders) ? $columnOrder : 'id asc';
+    }
 
     public function __construct($pdo) {
         $this->pdo = $pdo;
 
     }
 
-    public function findAllOrderBy($column)
+    public function findAllOrderBy($columnOrder)
     {
+        $columnOrder = self::checkedColumnAndOrder($columnOrder);
+
         $query = "SELECT * from tasks
-            ORDER BY $column;
+            ORDER BY $columnOrder;
             ";
         $prepquery = $this->pdo->prepare($query);
         $prepquery->execute();

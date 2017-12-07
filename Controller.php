@@ -34,5 +34,5 @@
         $task->deleteTask($deleteId);
     }
 
-    $column = $_POST['column'] ?? 'id';
-    $queryResult = $task->findAllOrderBy($column);
+    $columnOrder = $_POST['column'] ?? 'id asc';
+    $queryResult = $task->findAllOrderBy($columnOrder);
